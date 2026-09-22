@@ -1,45 +1,828 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TennoBuild AI</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#081018" />
+  <title>TennoBuild AI</title>
 
-    <style>
-        body {
-            margin: 0;
-            background: #0b0f14;
-            color: white;
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
+  <style>
+    :root {
+      --bg: #071018;
+      --panel: #0d1721;
+      --panel-2: #111e2b;
+      --border: #213243;
+      --text: #eaf2f8;
+      --muted: #8193a5;
+      --accent: #72c7e8;
+      --accent-2: #8a7cf0;
+      --good: #63d4a7;
+      --danger: #ee7884;
+      --shadow: 0 18px 50px rgba(0,0,0,.32);
+    }
 
-        .box {
-            text-align: center;
-        }
+    * {
+      box-sizing: border-box;
+    }
 
-        h1 {
-            font-size: 50px;
-            margin-bottom: 10px;
-        }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 15% 0%, rgba(114,199,232,.08), transparent 30%),
+        radial-gradient(circle at 85% 10%, rgba(138,124,240,.08), transparent 32%),
+        var(--bg);
+      color: var(--text);
+    }
 
-        p {
-            color: #8aa0b5;
-            font-size: 20px;
-        }
-    </style>
+    .page {
+      width: min(1280px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 48px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 44px);
+      letter-spacing: .08em;
+    }
+
+    .brand p {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .badge {
+      border: 1px solid var(--border);
+      background: rgba(17, 30, 43, .85);
+      padding: 9px 12px;
+      border-radius: 999px;
+      color: #a9bbca;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      white-space: nowrap;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 330px minmax(0, 1fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .panel {
+      background: linear-gradient(180deg, rgba(17,30,43,.96), rgba(11,21,31,.96));
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .sidebar {
+      padding: 18px;
+      position: sticky;
+      top: 18px;
+    }
+
+    .section-title {
+      margin: 0 0 8px;
+      font-size: 13px;
+      color: #c8d5df;
+      font-weight: 800;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    select,
+    input[type="search"] {
+      width: 100%;
+      min-height: 46px;
+      border: 1px solid #2a3c4e;
+      border-radius: 11px;
+      background: #08121b;
+      color: var(--text);
+      padding: 0 12px;
+      font-size: 15px;
+      outline: none;
+    }
+
+    select:focus,
+    input[type="search"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(114,199,232,.12);
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 18px 0;
+    }
+
+    .checks {
+      display: grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .check {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #c5d1dc;
+      font-size: 14px;
+    }
+
+    .check input {
+      width: 17px;
+      height: 17px;
+      accent-color: var(--accent);
+    }
+
+    .primary-btn {
+      width: 100%;
+      margin-top: 18px;
+      min-height: 50px;
+      border: 0;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--accent), #91d8f2);
+      color: #061018;
+      font-weight: 900;
+      font-size: 14px;
+      letter-spacing: .06em;
+      cursor: pointer;
+      transition: transform .12s ease, filter .12s ease;
+    }
+
+    .primary-btn:hover {
+      filter: brightness(1.06);
+      transform: translateY(-1px);
+    }
+
+    .content {
+      display: grid;
+      gap: 18px;
+    }
+
+    .weapon-card {
+      padding: 22px;
+    }
+
+    .weapon-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .weapon-name {
+      font-size: clamp(24px, 3vw, 34px);
+      font-weight: 900;
+      margin: 0;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .chip {
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: 1px solid #2c465d;
+      background: #122536;
+      color: #a8d9ed;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .04em;
+    }
+
+    .chip.family {
+      border-color: #4b446b;
+      background: #211d33;
+      color: #c5bbef;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .stat {
+      padding: 14px;
+      border: 1px solid #1f3040;
+      background: #08121b;
+      border-radius: 13px;
+    }
+
+    .stat .label {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+
+    .stat .value {
+      font-size: 24px;
+      font-weight: 900;
+    }
+
+    .build-panel {
+      padding: 18px;
+    }
+
+    .build-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .build-head h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .build-head span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .mods {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .mod {
+      min-height: 112px;
+      border-radius: 14px;
+      border: 1px solid #32485b;
+      background:
+        linear-gradient(180deg, rgba(114,199,232,.07), transparent 40%),
+        #101c27;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .mod .slot {
+      color: #6f8598;
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: .08em;
+    }
+
+    .mod .mod-name {
+      text-align: center;
+      font-size: 14px;
+      font-weight: 800;
+      line-height: 1.3;
+      margin: 12px 0;
+    }
+
+    .mod .tag {
+      color: #7ea3b9;
+      font-size: 10px;
+      text-align: center;
+    }
+
+    .ai-note {
+      padding: 16px;
+      border-left: 3px solid var(--accent);
+      background: rgba(9,19,28,.75);
+      border-radius: 12px;
+      color: #bdcbd6;
+      line-height: 1.55;
+    }
+
+    .ai-note strong {
+      color: var(--text);
+    }
+
+    footer {
+      margin-top: 20px;
+      text-align: center;
+      color: #5f7487;
+      font-size: 12px;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        position: static;
+      }
+
+      .mods {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 600px) {
+      .page {
+        width: min(100% - 20px, 1280px);
+        padding-top: 18px;
+      }
+
+      header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .mods {
+        grid-template-columns: 1fr;
+      }
+
+      .weapon-top {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .chips {
+        justify-content: flex-start;
+      }
+    }
+  </style>
 </head>
 
 <body>
-
-    <div class="box">
+  <main class="page">
+    <header>
+      <div class="brand">
         <h1>TENNO BUILD AI</h1>
-
         <p>Warframe Build Assistant</p>
-    </div>
+      </div>
+      <div class="badge">WEB PROTOTYPE v0.1</div>
+    </header>
 
+    <section class="layout">
+      <aside class="panel sidebar">
+        <div class="field">
+          <div class="section-title">Weapon Family</div>
+          <select id="familySelect"></select>
+        </div>
+
+        <div class="field">
+          <div class="section-title">Weapon Type</div>
+          <select id="typeSelect"></select>
+        </div>
+
+        <div class="field">
+          <div class="section-title">Weapon Name</div>
+          <input id="weaponSearch" type="search" placeholder="Search weapon..." />
+          <div style="height:8px"></div>
+          <select id="weaponSelect"></select>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="field">
+          <div class="section-title">Build Goal</div>
+          <select id="goalSelect">
+            <option>Hybrid</option>
+            <option>Critical</option>
+            <option>Status</option>
+            <option>Steel Path</option>
+          </select>
+        </div>
+
+        <div class="checks">
+          <label class="check">
+            <input id="steelPath" type="checkbox" />
+            Steel Path focus
+          </label>
+
+          <label class="check">
+            <input id="noFaction" type="checkbox" checked />
+            No faction mods
+          </label>
+
+          <label class="check">
+            <input id="noRiven" type="checkbox" checked />
+            No Riven
+          </label>
+
+          <label class="check">
+            <input id="incarnon" type="checkbox" />
+            Incarnon adapter / mode
+          </label>
+        </div>
+
+        <button id="generateBtn" class="primary-btn">
+          GENERATE BUILD
+        </button>
+      </aside>
+
+      <div class="content">
+        <section class="panel weapon-card">
+          <div class="weapon-top">
+            <h2 id="weaponName" class="weapon-name">-</h2>
+            <div class="chips">
+              <span id="familyChip" class="chip family">-</span>
+              <span id="typeChip" class="chip">-</span>
+            </div>
+          </div>
+
+          <div class="stats">
+            <div class="stat">
+              <div class="label">Critical Chance</div>
+              <div id="critChance" class="value">-</div>
+            </div>
+
+            <div class="stat">
+              <div class="label">Critical Multiplier</div>
+              <div id="critMult" class="value">-</div>
+            </div>
+
+            <div class="stat">
+              <div class="label">Status Chance</div>
+              <div id="statusChance" class="value">-</div>
+            </div>
+
+            <div class="stat">
+              <div class="label">Fire Rate / Attack Speed</div>
+              <div id="fireRate" class="value">-</div>
+            </div>
+
+            <div class="stat">
+              <div class="label">Magazine</div>
+              <div id="magazine" class="value">-</div>
+            </div>
+
+            <div class="stat">
+              <div class="label">Reload</div>
+              <div id="reload" class="value">-</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel build-panel">
+          <div class="build-head">
+            <h2>Recommended Build</h2>
+            <span id="buildMode">Prototype</span>
+          </div>
+
+          <div id="modsGrid" class="mods"></div>
+        </section>
+
+        <section id="aiNote" class="ai-note">
+          <strong>TennoBuild AI:</strong>
+          Select a weapon and press Generate Build.
+        </section>
+      </div>
+    </section>
+
+    <footer>
+      TennoBuild AI • Prototype data only • Warframe is property of Digital Extremes
+    </footer>
+  </main>
+
+  <script>
+    const weapons = [
+      {
+        name: "Braton",
+        family: "Normal",
+        type: "Primary",
+        critChance: 12,
+        critMult: 1.6,
+        statusChance: 6,
+        fireRate: 8.75,
+        magazine: 45,
+        reload: 2.0
+      },
+      {
+        name: "Hek",
+        family: "Normal",
+        type: "Primary",
+        critChance: 10,
+        critMult: 2.0,
+        statusChance: 25,
+        fireRate: 2.17,
+        magazine: 4,
+        reload: 2.0
+      },
+      {
+        name: "Soma Prime",
+        family: "Prime",
+        type: "Primary",
+        critChance: 30,
+        critMult: 3.0,
+        statusChance: 10,
+        fireRate: 15,
+        magazine: 200,
+        reload: 3.0
+      },
+      {
+        name: "Nikana Prime",
+        family: "Prime",
+        type: "Melee",
+        critChance: 28,
+        critMult: 2.4,
+        statusChance: 28,
+        fireRate: 1.08,
+        magazine: null,
+        reload: null
+      },
+      {
+        name: "Kuva Quartakk",
+        family: "Kuva",
+        type: "Primary",
+        critChance: 21,
+        critMult: 2.3,
+        statusChance: 33,
+        fireRate: 6.3,
+        magazine: 88,
+        reload: 1.9
+      },
+      {
+        name: "Kuva Nukor",
+        family: "Kuva",
+        type: "Secondary",
+        critChance: 7,
+        critMult: 5.0,
+        statusChance: 50,
+        fireRate: 10,
+        magazine: 77,
+        reload: 2.0
+      },
+      {
+        name: "Tenet Plinx",
+        family: "Tenet",
+        type: "Secondary",
+        critChance: 32,
+        critMult: 2.4,
+        statusChance: 22,
+        fireRate: 3.3,
+        magazine: 10,
+        reload: 1.1
+      },
+      {
+        name: "Tenet Arca Plasmor",
+        family: "Tenet",
+        type: "Primary",
+        critChance: 22,
+        critMult: 1.6,
+        statusChance: 34,
+        fireRate: 1.1,
+        magazine: 10,
+        reload: 3.0
+      },
+      {
+        name: "Coda Hema",
+        family: "Coda",
+        type: "Primary",
+        critChance: 24,
+        critMult: 2.3,
+        statusChance: 32,
+        fireRate: 6.0,
+        magazine: 60,
+        reload: 2.0
+      }
+    ];
+
+    const builds = {
+      Hybrid: [
+        "Galvanized Chamber",
+        "Critical Delay",
+        "Vital Sense",
+        "Galvanized Aptitude",
+        "Malignant Force",
+        "Rime Rounds",
+        "Hunter Munitions",
+        "Primed Shred"
+      ],
+      Critical: [
+        "Galvanized Chamber",
+        "Critical Delay",
+        "Vital Sense",
+        "Serration",
+        "Primed Cryo Rounds",
+        "Malignant Force",
+        "Hunter Munitions",
+        "Primed Shred"
+      ],
+      Status: [
+        "Galvanized Chamber",
+        "Galvanized Aptitude",
+        "Malignant Force",
+        "Rime Rounds",
+        "Thermite Rounds",
+        "High Voltage",
+        "Primed Shred",
+        "Serration"
+      ],
+      "Steel Path": [
+        "Galvanized Chamber",
+        "Critical Delay",
+        "Vital Sense",
+        "Galvanized Aptitude",
+        "Malignant Force",
+        "Rime Rounds",
+        "Hunter Munitions",
+        "Primed Shred"
+      ]
+    };
+
+    const familySelect = document.getElementById("familySelect");
+    const typeSelect = document.getElementById("typeSelect");
+    const weaponSearch = document.getElementById("weaponSearch");
+    const weaponSelect = document.getElementById("weaponSelect");
+
+    const weaponName = document.getElementById("weaponName");
+    const familyChip = document.getElementById("familyChip");
+    const typeChip = document.getElementById("typeChip");
+
+    const critChance = document.getElementById("critChance");
+    const critMult = document.getElementById("critMult");
+    const statusChance = document.getElementById("statusChance");
+    const fireRate = document.getElementById("fireRate");
+    const magazine = document.getElementById("magazine");
+    const reload = document.getElementById("reload");
+
+    const goalSelect = document.getElementById("goalSelect");
+    const steelPath = document.getElementById("steelPath");
+    const noRiven = document.getElementById("noRiven");
+    const incarnon = document.getElementById("incarnon");
+    const generateBtn = document.getElementById("generateBtn");
+
+    const modsGrid = document.getElementById("modsGrid");
+    const buildMode = document.getElementById("buildMode");
+    const aiNote = document.getElementById("aiNote");
+
+    function unique(values) {
+      return [...new Set(values)];
+    }
+
+    function fillSelect(select, values) {
+      select.innerHTML = "";
+      values.forEach(value => {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = value;
+        select.appendChild(option);
+      });
+    }
+
+    function refreshFamilies() {
+      const families = ["Normal", "Prime", "Kuva", "Tenet", "Coda"]
+        .filter(f => weapons.some(w => w.family === f));
+
+      fillSelect(familySelect, families);
+
+      if (families.includes("Coda")) {
+        familySelect.value = "Coda";
+      }
+
+      refreshTypes();
+    }
+
+    function refreshTypes() {
+      const family = familySelect.value;
+
+      const types = unique(
+        weapons
+          .filter(w => w.family === family)
+          .map(w => w.type)
+      );
+
+      fillSelect(typeSelect, types);
+      refreshWeapons();
+    }
+
+    function refreshWeapons() {
+      const family = familySelect.value;
+      const type = typeSelect.value;
+      const query = weaponSearch.value.trim().toLowerCase();
+
+      const filtered = weapons
+        .filter(w => w.family === family)
+        .filter(w => w.type === type)
+        .filter(w => w.name.toLowerCase().includes(query))
+        .sort((a, b) => a.name.localeCompare(b.name));
+
+      weaponSelect.innerHTML = "";
+
+      filtered.forEach(w => {
+        const option = document.createElement("option");
+        option.value = w.name;
+        option.textContent = w.name;
+        weaponSelect.appendChild(option);
+      });
+
+      renderWeapon();
+    }
+
+    function currentWeapon() {
+      return weapons.find(w => w.name === weaponSelect.value);
+    }
+
+    function renderWeapon() {
+      const w = currentWeapon();
+
+      if (!w) {
+        weaponName.textContent = "No weapon found";
+        familyChip.textContent = familySelect.value || "-";
+        typeChip.textContent = typeSelect.value || "-";
+
+        [critChance, critMult, statusChance, fireRate, magazine, reload]
+          .forEach(el => el.textContent = "-");
+
+        return;
+      }
+
+      weaponName.textContent = w.name;
+      familyChip.textContent = w.family.toUpperCase();
+      typeChip.textContent = w.type.toUpperCase();
+
+      critChance.textContent = `${w.critChance}%`;
+      critMult.textContent = `${w.critMult.toFixed(1)}x`;
+      statusChance.textContent = `${w.statusChance}%`;
+      fireRate.textContent = Number(w.fireRate).toFixed(2);
+      magazine.textContent = w.magazine ?? "—";
+      reload.textContent = w.reload == null ? "—" : `${w.reload.toFixed(2)}s`;
+    }
+
+    function generateBuild() {
+      const w = currentWeapon();
+
+      if (!w) {
+        aiNote.innerHTML = "<strong>TennoBuild AI:</strong> Select a weapon first.";
+        return;
+      }
+
+      const goal = steelPath.checked ? "Steel Path" : goalSelect.value;
+      const mods = builds[goal] || builds.Hybrid;
+
+      modsGrid.innerHTML = "";
+
+      mods.forEach((modName, index) => {
+        const card = document.createElement("div");
+        card.className = "mod";
+
+        card.innerHTML = `
+          <div class="slot">SLOT ${index + 1}</div>
+          <div class="mod-name">${modName}</div>
+          <div class="tag">Prototype</div>
+        `;
+
+        modsGrid.appendChild(card);
+      });
+
+      buildMode.textContent = `${w.family} • ${w.type} • ${goal}`;
+
+      const rivenText = noRiven.checked
+        ? "Riven disabled."
+        : "Riven support will be added later.";
+
+      const incarnonText = incarnon.checked
+        ? "Incarnon mode enabled for future calculations."
+        : "Incarnon mode off.";
+
+      aiNote.innerHTML = `
+        <strong>TennoBuild AI:</strong>
+        Prototype build generated for <strong>${w.name}</strong>
+        using the <strong>${goal}</strong> profile.
+        <br><br>
+        ${rivenText} ${incarnonText}
+        <br><br>
+        Next step: replace the demo data with a real Warframe database,
+        then calculate damage, crit, status, elemental combinations and Forma automatically.
+      `;
+    }
+
+    familySelect.addEventListener("change", refreshTypes);
+    typeSelect.addEventListener("change", refreshWeapons);
+    weaponSearch.addEventListener("input", refreshWeapons);
+    weaponSelect.addEventListener("change", renderWeapon);
+    generateBtn.addEventListener("click", generateBuild);
+
+    refreshFamilies();
+    generateBuild();
+  </script>
 </body>
 </html>
